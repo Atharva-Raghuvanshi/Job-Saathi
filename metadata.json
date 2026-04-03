@@ -1,0 +1,5 @@
+{
+  "name": "Job-saathi",
+  "description": "Smart AI-powered resume analyzer with ATS scoring, strength/weakness plotting, and job role recommendations.",
+  "requestFramePermissions": []
+}
