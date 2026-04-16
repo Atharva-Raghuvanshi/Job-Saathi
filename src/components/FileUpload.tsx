@@ -1,8 +1,9 @@
 import React, { useCallback, useState } from 'react';
 import { useDropzone, DropzoneOptions } from 'react-dropzone';
-import { Upload, FileText, X, Loader2 } from 'lucide-react';
+import { Upload, FileText, X, Loader2, AlertCircle } from 'lucide-react';
 import * as pdfjsLib from 'pdfjs-dist';
 import { cn } from '@/src/lib/utils';
+import { motion } from 'motion/react';
 
 // Set up PDF.js worker
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
@@ -17,58 +18,106 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onTextExtracted, isAnaly
   const [error, setError] = useState<string | null>(null);
   const [isExtracting, setIsExtracting] = useState(false);
 
+  const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+
   const extractTextFromPdf = async (file: File) => {
     setIsExtracting(true);
     setError(null);
     try {
       const arrayBuffer = await file.arrayBuffer();
       const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      
+      if (pdf.numPages === 0) {
+        throw new Error("This PDF appears to be empty.");
+      }
+
       let fullText = '';
       
       for (let i = 1; i <= pdf.numPages; i++) {
-        const page = await pdf.getPage(i);
-        const textContent = await page.getTextContent();
-        const pageText = textContent.items.map((item: any) => item.str).join(' ');
-        fullText += pageText + '\n';
+        try {
+          const page = await pdf.getPage(i);
+          const textContent = await page.getTextContent();
+          const pageText = textContent.items.map((item: any) => item.str).join(' ');
+          fullText += pageText + '\n';
+        } catch (pageErr) {
+          console.warn(`Failed to extract text from page ${i}:`, pageErr);
+          // Continue with other pages if one fails
+        }
       }
       
       if (!fullText.trim()) {
-        throw new Error("No text could be extracted from this PDF.");
+        throw new Error("No readable text could be extracted from this PDF. It might be an image-based PDF or scanned document without OCR.");
       }
       
       onTextExtracted(fullText);
-    } catch (err) {
+    } catch (err: any) {
       console.error("PDF extraction error:", err);
-      setError("Failed to read PDF. Please ensure it's not password protected or corrupted.");
+      if (err.name === 'PasswordException') {
+        setError("This PDF is password protected. Please upload an unprotected version.");
+      } else if (err.message) {
+        setError(err.message);
+      } else {
+        setError("Failed to read PDF. The file might be corrupted or in an unsupported format.");
+      }
+      setFile(null); // Reset file on error
     } finally {
       setIsExtracting(false);
     }
   };
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
+  const onDrop = useCallback((acceptedFiles: File[], rejectedFiles: any[]) => {
+    if (rejectedFiles.length > 0) {
+      const rejection = rejectedFiles[0];
+      if (rejection.errors[0]?.code === 'file-too-large') {
+        setError("File is too large. Maximum size allowed is 5MB.");
+      } else if (rejection.errors[0]?.code === 'file-invalid-type') {
+        setError("Invalid file type. Please upload a PDF or TXT file.");
+      } else {
+        setError("Failed to upload file. Please try again.");
+      }
+      return;
+    }
+
     const selectedFile = acceptedFiles[0];
     if (selectedFile) {
+      if (selectedFile.size > MAX_FILE_SIZE) {
+        setError("File is too large. Maximum size allowed is 5MB.");
+        return;
+      }
+
       setFile(selectedFile);
+      setError(null);
+
       if (selectedFile.type === 'application/pdf') {
         extractTextFromPdf(selectedFile);
       } else {
         const reader = new FileReader();
         reader.onload = (e) => {
           const text = e.target?.result as string;
+          if (!text.trim()) {
+            setError("The uploaded text file is empty.");
+            setFile(null);
+            return;
+          }
           onTextExtracted(text);
+        };
+        reader.onerror = () => {
+          setError("Failed to read the text file.");
+          setFile(null);
         };
         reader.readAsText(selectedFile);
       }
     }
   }, [onTextExtracted]);
 
-  const dropzoneOptions: any = {
+  const dropzoneOptions: DropzoneOptions = {
     onDrop,
     accept: {
       'application/pdf': ['.pdf'],
       'text/plain': ['.txt'],
     },
     multiple: false,
+    maxSize: MAX_FILE_SIZE,
     disabled: isAnalyzing || isExtracting
   };
 
@@ -142,7 +191,25 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onTextExtracted, isAnaly
         </div>
       )}
       {error && (
-        <p className="mt-4 text-center text-red-500 font-medium">{error}</p>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="mt-6 p-4 bg-rose-50 border border-rose-100 rounded-2xl flex items-start gap-3 text-rose-800 shadow-sm"
+        >
+          <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-rose-500 shadow-sm shrink-0">
+            <AlertCircle size={16} />
+          </div>
+          <div className="flex-grow">
+            <h4 className="font-black text-[10px] uppercase tracking-widest mb-0.5">Upload Error</h4>
+            <p className="text-xs font-medium opacity-80">{error}</p>
+          </div>
+          <button 
+            onClick={() => setError(null)}
+            className="p-1 hover:bg-rose-100 rounded-md transition-colors text-rose-400"
+          >
+            <X size={14} />
+          </button>
+        </motion.div>
       )}
     </div>
   );

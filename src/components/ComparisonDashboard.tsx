@@ -12,7 +12,7 @@ import {
   ResponsiveContainer,
   Tooltip,
 } from 'recharts';
-import html2canvas from 'html2canvas';
+import { domToPng } from 'modern-screenshot';
 import jsPDF from 'jspdf';
 
 interface ComparisonDashboardProps {
@@ -41,20 +41,26 @@ export const ComparisonDashboard: React.FC<ComparisonDashboardProps> = ({ data }
     if (!dashboardRef.current) return;
     setIsDownloading(true);
     try {
-      const canvas = await html2canvas(dashboardRef.current, {
+      // modern-screenshot handles modern CSS like oklch much better than html2canvas
+      const imgData = await domToPng(dashboardRef.current, {
         scale: 2,
-        useCORS: true,
-        logging: false,
         backgroundColor: '#f8fafc',
       });
-      const imgData = canvas.toDataURL('image/png');
+
       const pdf = new jsPDF('p', 'mm', 'a4');
       const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      
+      // Create a temporary image to get dimensions
+      const img = new Image();
+      img.src = imgData;
+      await new Promise((resolve) => (img.onload = resolve));
+      
+      const pdfHeight = (img.height * pdfWidth) / img.width;
       pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
       pdf.save(`Job-saathi-Comparison-${new Date().getTime()}.pdf`);
     } catch (error) {
       console.error('Download failed:', error);
+      alert('Failed to generate PDF. Please try again or use the browser print feature.');
     } finally {
       setIsDownloading(false);
     }

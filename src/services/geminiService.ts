@@ -86,16 +86,34 @@ export async function analyzeResume(resumeText: string): Promise<ResumeAnalysis>
   });
 
   try {
-    return JSON.parse(response.text || "{}");
+    if (!response.text) {
+      throw new Error("The AI returned an empty response. This might be a temporary glitch. Please try again.");
+    }
+    
+    const parsed = JSON.parse(response.text);
+    
+    // Basic validation of the parsed object
+    if (typeof parsed.atsScore !== 'number') {
+      throw new Error("The analysis result was incomplete (missing ATS score). Please try re-uploading.");
+    }
+    
+    return parsed as ResumeAnalysis;
   } catch (e) {
     console.error("Failed to parse AI response", e);
-    throw new Error("Failed to analyze resume. Please try again.");
+    if (e instanceof SyntaxError) {
+      throw new Error("The AI response was not in the expected format. This can happen with complex resumes. Please try again.");
+    }
+    throw e instanceof Error ? e : new Error("An unexpected error occurred during resume analysis.");
   }
 }
 
 export async function compareResumes(text1: string, text2: string): Promise<ResumeComparison> {
   const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
   
+  if (!GEMINI_API_KEY) {
+    throw new Error("Gemini API Key is missing. Please configure it in the environment variables.");
+  }
+
   const response = await ai.models.generateContent({
     model: "gemini-3-flash-preview",
     contents: `Compare the following two resumes and provide a detailed side-by-side assessment in JSON format.
@@ -163,9 +181,22 @@ export async function compareResumes(text1: string, text2: string): Promise<Resu
   });
 
   try {
-    return JSON.parse(response.text || "{}");
+    if (!response.text) {
+      throw new Error("The AI returned an empty comparison response. Please try again.");
+    }
+    
+    const parsed = JSON.parse(response.text);
+    
+    if (!parsed.resume1 || !parsed.resume2) {
+      throw new Error("The comparison result was incomplete. Please try re-uploading the resumes.");
+    }
+    
+    return parsed as ResumeComparison;
   } catch (e) {
     console.error("Failed to parse AI comparison response", e);
-    throw new Error("Failed to compare resumes. Please try again.");
+    if (e instanceof SyntaxError) {
+      throw new Error("The AI comparison response was not in the expected format. Please try again.");
+    }
+    throw e instanceof Error ? e : new Error("An unexpected error occurred during resume comparison.");
   }
 }

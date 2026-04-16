@@ -3,7 +3,7 @@ import { FileUpload } from './components/FileUpload';
 import { AnalysisDashboard } from './components/AnalysisDashboard';
 import { ComparisonDashboard } from './components/ComparisonDashboard';
 import { analyzeResume, compareResumes, ResumeAnalysis, ResumeComparison } from './services/geminiService';
-import { Sparkles, History, RefreshCw, Github, Scale, FileText, Layout, FileSearch, BarChart3, Terminal, Cpu, ShieldCheck, AlertCircle } from 'lucide-react';
+import { Sparkles, History, RefreshCw, Github, Scale, FileText, Layout, FileSearch, BarChart3, Terminal, Cpu, ShieldCheck, AlertCircle, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from './lib/utils';
 import { ErrorBoundary } from './components/ErrorBoundary';
@@ -23,13 +23,17 @@ export default function App() {
   const [resume2, setResume2] = useState<string | null>(null);
 
   const handleSingleAnalysis = async (text: string) => {
+    if (!process.env.GEMINI_API_KEY) {
+      setError("Gemini API Key is not configured. Please add it to your environment variables to enable AI analysis.");
+      return;
+    }
     setIsAnalyzing(true);
     setError(null);
     try {
       const result = await analyzeResume(text);
       setAnalysis(result);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An unexpected error occurred");
+      setError(err instanceof Error ? err.message : "An unexpected error occurred during analysis.");
     } finally {
       setIsAnalyzing(false);
     }
@@ -37,13 +41,17 @@ export default function App() {
 
   const handleCompare = async () => {
     if (!resume1 || !resume2) return;
+    if (!process.env.GEMINI_API_KEY) {
+      setError("Gemini API Key is not configured. Please add it to your environment variables to enable AI comparison.");
+      return;
+    }
     setIsAnalyzing(true);
     setError(null);
     try {
       const result = await compareResumes(resume1, resume2);
       setComparison(result);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An unexpected error occurred");
+      setError(err instanceof Error ? err.message : "An unexpected error occurred during comparison.");
     } finally {
       setIsAnalyzing(false);
     }
@@ -143,15 +151,21 @@ export default function App() {
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="mb-8 p-6 bg-rose-50 border border-rose-100 rounded-[2rem] flex items-start gap-4 text-rose-800 shadow-sm"
+                  className="mb-8 p-6 bg-rose-50 border border-rose-100 rounded-[2rem] flex items-start gap-4 text-rose-800 shadow-sm relative group"
                 >
                   <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-rose-500 shadow-sm shrink-0">
                     <AlertCircle size={20} />
                   </div>
-                  <div>
+                  <div className="flex-grow">
                     <h4 className="font-black text-sm uppercase tracking-widest mb-1">System Error</h4>
                     <p className="text-sm font-medium opacity-80">{error}</p>
                   </div>
+                  <button 
+                    onClick={() => setError(null)}
+                    className="p-2 hover:bg-rose-100 rounded-xl transition-colors text-rose-400"
+                  >
+                    <X size={20} />
+                  </button>
                 </motion.div>
               )}
 
