@@ -47,48 +47,48 @@ export class ErrorBoundary extends React.Component<Props, State> {
   public render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-[500px] flex flex-col items-center justify-center p-8 sm:p-12 text-center bg-white organic-card m-4 sm:m-8 border-rose-100 shadow-[0_20px_50px_rgba(244,63,94,0.05)]">
-          <div className="w-20 h-20 bg-rose-50 text-rose-500 rounded-[2rem] flex items-center justify-center mb-8 shadow-sm">
-            <AlertTriangle size={40} />
+        <div className="min-h-[500px] flex flex-col items-center justify-center p-8 sm:p-12 text-center bg-tech-card border border-neon-pink/40 rounded-2xl m-4 sm:m-8 shadow-[0_0_30px_rgba(255,0,127,0.15)]">
+          <div className="w-16 h-16 bg-neon-pink/10 text-neon-pink rounded-xl flex items-center justify-center mb-6 shadow-[0_0_15px_rgba(255,0,127,0.2)] border border-neon-pink/30 animate-pulse">
+            <AlertTriangle size={32} />
           </div>
-          <h2 className="text-3xl font-serif font-black text-gray-900 mb-4 tracking-tight">A small detour</h2>
-          <p className="text-gray-500 max-w-md mb-10 font-medium leading-relaxed">
-            It seems we've hit a bit of a bump on the road. Don't worry, your career journey is still safe—we just need to reset the path.
+          <h2 className="text-2xl font-serif font-black text-white mb-2 tracking-tight uppercase">[ CRITICAL_SYSTEM_INTERRUPT ]</h2>
+          <p className="text-slate-400 max-w-md mb-8 font-mono text-xs leading-relaxed">
+            A parsing anomaly was detected in the active data thread. Review technical diagnostic parameters or initiate an application recoin.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4">
             <button
               onClick={() => window.location.reload()}
-              className="flex items-center gap-3 px-8 py-4 bg-[#1a1c1e] text-white rounded-[2rem] font-bold hover:bg-gray-800 transition-all shadow-xl active:scale-95"
+              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-neon-cyan/20 to-neon-violet/20 hover:from-neon-cyan/30 hover:to-neon-violet/30 border border-neon-cyan/40 text-neon-cyan rounded-xl font-serif font-bold hover:shadow-[0_0_15px_rgba(0,243,255,0.2)] transition-all cursor-pointer text-sm"
             >
-              <RefreshCw size={20} />
-              Reload Application
+              <RefreshCw size={16} className="animate-spin" />
+              HOT_RELOAD
             </button>
             
             {process.env.NODE_ENV === 'development' && (
               <>
                 <button
                   onClick={this.handleCopy}
-                  className="flex items-center gap-3 px-8 py-4 bg-white text-gray-900 border-2 border-gray-100 rounded-[2rem] font-bold hover:bg-gray-50 transition-all active:scale-95 shadow-sm"
+                  className="flex items-center gap-2 px-6 py-3 bg-slate-900 text-slate-300 border border-tech-border rounded-xl font-mono text-xs hover:text-white hover:border-slate-500 transition-all cursor-pointer"
                 >
-                  {this.state.copied ? <Check size={20} className="text-emerald-600" /> : <Copy size={20} />}
-                  {this.state.copied ? 'Copied!' : 'Copy Details'}
+                  {this.state.copied ? <Check size={14} className="text-neon-emerald" /> : <Copy size={14} />}
+                  {this.state.copied ? 'COPIED_LOGS_OK' : 'COPY_DIAGNOSTICS'}
                 </button>
 
                 <button
                   onClick={this.handleHardReset}
-                  className="flex items-center gap-3 px-8 py-4 bg-rose-50 text-rose-600 border-2 border-rose-100 rounded-[2rem] font-bold hover:bg-rose-100 transition-all active:scale-95 shadow-sm"
+                  className="flex items-center gap-2 px-6 py-3 bg-slate-900 text-neon-pink border border-neon-pink/20 rounded-xl font-mono text-xs hover:bg-neon-pink/10 hover:border-neon-pink/60 transition-all cursor-pointer"
                 >
-                  <Trash2 size={20} />
-                  Hard Reset
+                  <Trash2 size={14} />
+                  HARD_RESET_PURGE
                 </button>
               </>
             )}
           </div>
 
           {process.env.NODE_ENV === 'development' && (
-            <div className="mt-12 w-full max-w-2xl">
-              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 mb-4">Technical Details</p>
-              <pre className="p-6 bg-gray-900 text-rose-400 text-xs text-left rounded-[2rem] overflow-auto max-h-48 w-full shadow-inner">
+            <div className="mt-8 w-full max-w-2xl">
+              <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-2">// DIAGNOSTIC ERROR STREAM</p>
+              <pre className="p-4 bg-slate-950 text-neon-pink text-[11px] font-mono text-left rounded-lg overflow-auto max-h-48 w-full border border-tech-border shadow-inner">
                 {this.state.error?.toString()}
               </pre>
             </div>

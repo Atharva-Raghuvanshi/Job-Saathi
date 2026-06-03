@@ -1,51 +1,81 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:ital,wght@0,400;0,600;0,800;1,400&family=Dancing+Script:wght@500;700&display=swap');
 @import "tailwindcss";
 
 @theme {
   --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-serif: "Playfair Display", serif;
+  --font-serif: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-cursive: "Dancing Script", cursive;
   
-  --color-warm-gray: #fdfcfb;
-  --color-ink: #1a1c1e;
-  --color-clay: #d4a373;
-  --color-moss: #606c38;
+  --color-tech-bg: #070a13;
+  --color-tech-card: #0d1324;
+  --color-tech-border: #1e293b;
+  --color-neon-cyan: #00f3ff;
+  --color-neon-emerald: #10f49c;
+  --color-neon-pink: #ff007f;
+  --color-neon-violet: #a855f7;
 }
 
 @layer base {
   body {
-    @apply bg-[#fdfcfb] text-[#1a1c1e] selection:bg-[#d4a373]/20 selection:text-[#1a1c1e] antialiased font-sans;
-    /* Subtle paper grain texture */
-    background-image: url("https://www.transparenttextures.com/patterns/natural-paper.png");
+    @apply bg-tech-bg text-slate-100 selection:bg-neon-cyan/20 selection:text-neon-cyan antialiased font-sans transition-colors duration-300;
+    /* Subtle glowing grid lines background */
+    background-image: 
+      linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    background-position: center;
   }
   
   h1, h2, h3, h4 {
-    @apply font-serif tracking-tight;
+    @apply font-serif tracking-tight text-slate-100;
   }
 }
 
 @layer components {
+  /* High-tech glassmorphism/dashboard cards resembling a premium dark-mode LinkedIn hub */
   .organic-card {
-    @apply bg-white border border-[#e5e7eb] shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-[2.5rem] transition-all duration-500;
-    /* Slightly irregular border radius for a "manmade" feel */
-    border-radius: 2.5rem 2.2rem 2.8rem 2.4rem;
+    @apply bg-tech-card/80 backdrop-blur-md border border-tech-border shadow-[0_12px_40px_rgba(0,0,0,0.4)] rounded-2xl transition-all duration-300;
+    border-radius: 1rem;
   }
   
   .organic-card:hover {
-    @apply shadow-[0_20px_50px_rgba(212,163,115,0.1)] -translate-y-1;
-    border-radius: 2.3rem 2.7rem 2.4rem 2.6rem;
+    @apply border-neon-cyan/40 shadow-[0_0_30px_rgba(0,243,255,0.15)] -translate-y-0.5;
   }
 
-  .hand-drawn-border {
-    position: relative;
+  .neon-glow-cyan {
+    box-shadow: 0 0 20px rgba(0, 243, 255, 0.15);
   }
 
-  .hand-drawn-border::after {
-    content: '';
-    position: absolute;
-    inset: -2px;
-    border: 2px solid currentColor;
-    border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
-    pointer-events: none;
-    opacity: 0.2;
+  .neon-glow-emerald {
+    box-shadow: 0 0 20px rgba(16, 244, 156, 0.15);
+  }
+
+  .neon-glow-violet {
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.15);
+  }
+
+  /* Scrollbar override */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-tech-bg;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-slate-800 rounded-md hover:bg-neon-cyan/40;
+  }
+}
+
+/* Custom print fallback */
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  .organic-card {
+    border: 1px solid #ddd !important;
+    background: transparent !important;
+    box-shadow: none !important;
   }
 }

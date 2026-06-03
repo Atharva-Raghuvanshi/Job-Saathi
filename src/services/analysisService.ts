@@ -61,16 +61,24 @@ export async function analyzeResume(resumeText: string): Promise<ResumeAnalysis>
     score: 80 + Math.floor(Math.random() * 15)
   }));
 
-  // 5. Identify Weaknesses (missing common industry skills)
-  const allCommonSkills = [...TECH_SKILLS.languages, ...TECH_SKILLS.frameworks, ...TECH_SKILLS.cloud];
-  const missingSkills = allCommonSkills
-    .filter(skill => !foundSkills.includes(skill))
+  // 5. Identify High-Value Target Acquisitions (Advanced Databases, AI/ML features, and Blockchain)
+  const premiumGrowthPool = [
+    "PostgreSQL", "MongoDB", "Redis", "Supabase", "SurrealDB", "ClickHouse", "Cassandra", 
+    "Google Cloud Spanner", "Amazon Aurora", "Databricks", "Delta Lake", "Apache Iceberg",
+    "Pinecone", "Milvus", "ChromaDB", "Weaviate", "Qdrant", "pgvector", "Faiss", "Feast Feature Store",
+    "Generative AI", "LLMs", "RAG (Retrieval-Augmented Generation)", "Prompt Engineering", 
+    "Fine-Tuning", "LangChain", "LlamaIndex", "Hugging Face", "MLOps", "Vector Search", "Deep Learning",
+    "Solidity", "Smart Contracts", "DeFi (Decentralized Finance)", "DApps", "Cryptography", "IPFS", "BigchainDB"
+  ];
+
+  const missingSkills = premiumGrowthPool
+    .filter(skill => !foundSkills.map(s => s.toLowerCase()).includes(skill.toLowerCase()))
     .sort(() => 0.5 - Math.random()) // Randomize missing skills for variety
     .slice(0, 4);
   
   const weaknesses = missingSkills.map(skill => ({
     name: skill,
-    score: 25 + Math.floor(Math.random() * 25)
+    score: 65 + Math.floor(Math.random() * 25) // Higher score represents target adoption opportunity level
   }));
 
   // 6. Suggest Job Roles based on keyword matching

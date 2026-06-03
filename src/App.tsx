@@ -3,14 +3,10 @@ import { FileUpload } from './components/FileUpload';
 import { AnalysisDashboard } from './components/AnalysisDashboard';
 import { ComparisonDashboard } from './components/ComparisonDashboard';
 import { analyzeResume, compareResumes, ResumeAnalysis, ResumeComparison } from './services/analysisService';
-import { History, RefreshCw, Github, Scale, FileText, Layout, FileSearch, BarChart3, Heart, Coffee, ShieldCheck, AlertCircle, X, Compass } from 'lucide-react';
+import { History, RefreshCw, Scale, Layout, FileSearch, BarChart3, ShieldCheck, AlertCircle, X, Compass, Zap, HelpCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from './lib/utils';
 import { ErrorBoundary } from './components/ErrorBoundary';
-
-/**
- * Job-saathi: A human-centric resume companion.
- */
 
 type Mode = 'analyze' | 'compare';
 
@@ -114,55 +110,60 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col font-sans">
-      {/* Friendly Header */}
-      <header className="sticky top-0 z-50 bg-white/60 backdrop-blur-md border-b border-gray-100">
+    <div className="min-h-screen flex flex-col font-sans text-slate-200">
+      
+      {/* High-Tech Sticky Taskbar Header */}
+      <header className="sticky top-0 z-50 bg-tech-card/90 backdrop-blur-md border-b border-tech-border text-white shadow-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+          
           <div className="flex items-center gap-3 group cursor-pointer" onClick={reset}>
-            <div className="w-10 h-10 bg-[#d4a373] rounded-2xl flex items-center justify-center text-white shadow-sm group-hover:rotate-6 transition-transform">
-              <Compass size={22} />
+            <div className="w-10 h-10 bg-gradient-to-r from-neon-cyan to-neon-violet rounded-xl flex items-center justify-center text-[#070a13] shadow-[0_0_15px_rgba(0,243,255,0.3)] group-hover:scale-105 transition-transform duration-300">
+              <Compass size={22} className="animate-spin-slow" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-gray-900 tracking-tight leading-none">Job-saathi</h1>
-              <p className="text-[10px] font-medium text-gray-400 uppercase tracking-widest mt-1">Your Career Companion</p>
+              <h1 className="text-lg font-black tracking-wider leading-none text-white font-serif">JOB-SAATHI</h1>
             </div>
           </div>
 
-          <nav className="hidden md:flex items-center bg-gray-50 p-1 rounded-2xl border border-gray-100">
+          {/* Core Navigation Bar formatted like a high-density LinkedIn widget */}
+          <nav className="hidden md:flex items-center bg-[#070a13]/80 p-1 rounded-xl border border-tech-border">
             <button
               onClick={() => { setMode('analyze'); reset(); }}
-              className={`flex items-center gap-2 px-6 py-2 rounded-xl text-sm font-semibold transition-all ${
+              className={`flex items-center gap-2 px-5 py-2 rounded-lg text-xs font-mono tracking-wider transition-all duration-300 pointer cursor-pointer ${
                 mode === 'analyze' 
-                ? 'bg-white text-[#d4a373] shadow-sm' 
-                : 'text-gray-400 hover:text-gray-600'
+                ? 'bg-gradient-to-r from-neon-cyan/15 to-neon-cyan/5 text-neon-cyan border border-neon-cyan/45 shadow-[0_0_15px_rgba(0,243,255,0.1)]' 
+                : 'text-slate-400 hover:text-neon-cyan border border-transparent'
               }`}
             >
-              <FileSearch size={16} />
-              Insights
+              <FileSearch size={14} />
+              RESUME ANALYZER
             </button>
             <button
               onClick={() => { setMode('compare'); reset(); }}
-              className={`flex items-center gap-2 px-6 py-2 rounded-xl text-sm font-semibold transition-all ${
+              className={`flex items-center gap-2 px-5 py-2 rounded-lg text-xs font-mono tracking-wider transition-all duration-300 pointer cursor-pointer ${
                 mode === 'compare' 
-                ? 'bg-white text-[#d4a373] shadow-sm' 
-                : 'text-gray-400 hover:text-gray-600'
+                ? 'bg-gradient-to-r from-neon-cyan/15 to-neon-cyan/5 text-neon-cyan border border-neon-cyan/45 shadow-[0_0_15px_rgba(0,243,255,0.1)]' 
+                : 'text-slate-400 hover:text-neon-cyan border border-transparent'
               }`}
             >
-              <BarChart3 size={16} />
-              Comparison
+              <BarChart3 size={14} />
+              RESUME COMPARE
             </button>
           </nav>
 
-          <div className="flex items-center gap-4">
+          {/* Action Hub */}
+          <div className="flex items-center gap-4 text-xs font-mono">
             <button 
               onClick={() => setShowHistory(!showHistory)}
               className={cn(
-                "p-2.5 transition-colors rounded-xl",
-                showHistory ? "bg-[#d4a373]/10 text-[#d4a373]" : "text-gray-400 hover:text-gray-600 hover:bg-gray-50"
+                "p-2.5 transition-all rounded-xl border flex items-center justify-center cursor-pointer",
+                showHistory 
+                  ? "bg-neon-cyan/10 border-neon-cyan/40 text-neon-cyan shadow-[0_0_10px_rgba(0,243,255,0.15)]" 
+                  : "border-tech-border text-slate-400 hover:text-neon-cyan hover:border-neon-cyan/30 bg-slate-900/60"
               )}
               aria-label="View History"
             >
-              <History size={20} />
+              <History size={18} />
             </button>
           </div>
         </div>
@@ -174,32 +175,33 @@ export default function App() {
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="absolute top-full right-4 mt-2 w-80 bg-white border border-gray-100 shadow-2xl rounded-3xl overflow-hidden z-50"
+              className="absolute top-full right-4 mt-2 w-80 bg-tech-card border border-tech-border shadow-2xl rounded-2xl overflow-hidden z-50"
             >
-              <div className="p-6">
-                <h3 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-4">Recent Analyses</h3>
+              <div className="p-5 font-mono text-xs">
+                <div className="flex items-center justify-between pb-3 border-b border-slate-800 mb-3">
+                  <span className="text-[10px] text-slate-500 font-extrabold uppercase tracking-wider">PAST ANALYSES</span>
+                  <span className="text-[9px] bg-slate-900 border border-tech-border text-neon-emerald px-1.5 py-0.5 rounded uppercase">History Active</span>
+                </div>
                 {history.length === 0 ? (
-                  <p className="text-sm text-gray-500 italic">No history yet. Start analyzing!</p>
+                  <p className="text-xs text-slate-500 italic py-4 text-center">No previous analyses found.</p>
                 ) : (
-                  <div className="space-y-3">
+                  <div className="space-y-2 max-h-72 overflow-y-auto pr-1">
                     {history.map((item) => (
                       <button
                         key={item.id}
                         onClick={() => loadFromHistory(item)}
-                        className="w-full text-left p-4 rounded-2xl hover:bg-gray-50 transition-colors border border-transparent hover:border-gray-100 group"
+                        className="w-full text-left p-3 rounded-lg bg-slate-950/80 border border-tech-border hover:border-neon-cyan/40 hover:bg-slate-900 transition-colors group flex items-center gap-3 cursor-pointer"
                       >
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center text-gray-400 group-hover:text-[#d4a373] transition-colors">
-                            {item.mode === 'analyze' ? <FileSearch size={14} /> : <Scale size={14} />}
-                          </div>
-                          <div>
-                            <p className="text-sm font-bold text-gray-900">
-                              {item.mode === 'analyze' ? 'Resume Insight' : 'Comparison'}
-                            </p>
-                            <p className="text-[10px] text-gray-400 font-medium">
-                              {new Date(item.timestamp).toLocaleDateString()} at {new Date(item.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                            </p>
-                          </div>
+                        <div className="w-8 h-8 rounded bg-slate-900 border border-tech-border flex items-center justify-center text-slate-500 group-hover:text-neon-cyan group-hover:border-neon-cyan/30 transition-colors">
+                          {item.mode === 'analyze' ? <FileSearch size={14} /> : <Scale size={14} />}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-xs font-bold text-slate-200 group-hover:text-white truncate">
+                            {item.mode === 'analyze' ? 'RESUME ANALYSIS' : 'RESUME COMPARISON'}
+                          </p>
+                          <p className="text-[9px] text-slate-500 mt-0.5">
+                            {new Date(item.timestamp).toLocaleDateString()} // {new Date(item.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </p>
                         </div>
                       </button>
                     ))}
@@ -211,50 +213,60 @@ export default function App() {
         </AnimatePresence>
       </header>
 
-      <main className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full">
+      {/* Main Context container */}
+      <main className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full flex flex-col justify-center">
         <AnimatePresence mode="wait">
           {!analysis && !comparison ? (
             <motion.div
               key="landing"
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="max-w-4xl mx-auto"
+              exit={{ opacity: 0, y: -15 }}
+              className="max-w-4xl mx-auto w-full"
             >
-              <div className="text-center mb-12 sm:mb-16">
-                <h2 className="text-4xl sm:text-5xl md:text-7xl font-serif font-black text-gray-900 tracking-tight mb-6 leading-[1.1]">
-                  Let's find your <br /><span className="text-[#d4a373] italic">next big thing.</span>
+              <div className="text-center mb-10">
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-[#0d1324] border border-tech-border rounded-full text-[10px] tracking-widest text-[#00f3ff] mb-6 shadow-[0_0_15px_rgba(0,243,255,0.08)] font-bold uppercase">
+                  <Zap size={10} className="text-neon-cyan animate-pulse" />
+                  AI-POWERED INSIGHTS ACTIVE
+                </div>
+
+                <h2 className="text-4xl sm:text-5xl md:text-6xl font-serif font-black text-white tracking-tight mb-4 leading-tight">
+                  Let's find your <br />
+                  <span className="bg-gradient-to-r from-neon-cyan via-[#0dfc90] to-[#b400ff] bg-clip-text text-transparent font-black filter drop-shadow-[0_0_10px_rgba(0,243,255,0.15)] animate-pulse">next big venture.</span>
                 </h2>
-                <p className="text-lg sm:text-xl text-gray-500 max-w-2xl mx-auto font-medium leading-relaxed px-4">
-                  We'll help you understand how your resume looks to others and give you gentle nudges in the right direction.
+                
+                <p className="text-sm sm:text-base text-slate-400 max-w-2xl mx-auto tracking-wide leading-relaxed px-4">
+                  Upload your resume to evaluate compatibility, map key skill strengths and gaps, and receive instant recommendations to accelerate your professional path.
                 </p>
               </div>
 
+              {/* Error messages wrapper with futuristic red banner */}
               {error && (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="mb-8 p-6 bg-rose-50 border border-rose-100 rounded-[2rem] flex items-start gap-4 text-rose-800 shadow-sm relative group"
+                  className="mb-8 p-5 bg-neon-pink/10 border border-neon-pink/20 rounded-2xl flex items-start gap-4 text-neon-pink shadow-lg"
                 >
-                  <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-rose-500 shadow-sm shrink-0">
+                  <div className="w-10 h-10 rounded-xl bg-slate-950 border border-neon-pink/30 flex items-center justify-center text-neon-pink shadow-inner shrink-0">
                     <AlertCircle size={20} />
                   </div>
-                  <div className="flex-grow">
-                    <h4 className="font-bold text-sm uppercase tracking-widest mb-1">A small hiccup</h4>
-                    <p className="text-sm font-medium opacity-80">{error}</p>
+                  <div className="flex-grow min-w-0">
+                    <h4 className="font-mono font-black text-xs uppercase tracking-widest mb-1">ANALYSIS ERROR</h4>
+                    <p className="text-sm font-medium text-slate-200">{error}</p>
                   </div>
                   <button 
                     onClick={() => setError(null)}
-                    className="p-2 hover:bg-rose-100 rounded-xl transition-colors text-rose-400"
+                    className="p-1.5 hover:bg-neon-pink/20 rounded-xl transition-all text-neon-pink cursor-pointer"
                   >
                     <X size={20} />
                   </button>
                 </motion.div>
               )}
 
+              {/* Form trigger panels */}
               <div className="relative">
                 {mode === 'analyze' ? (
-                  <div className="space-y-8">
+                  <div className="space-y-6">
                     <FileUpload key={`single-upload-${resetKey}`} onTextExtracted={(text) => setExtractedText(text)} isAnalyzing={isAnalyzing} />
                     {extractedText && !analysis && (
                       <motion.div 
@@ -265,42 +277,42 @@ export default function App() {
                         <button
                           onClick={handleSingleAnalysis}
                           disabled={isAnalyzing}
-                          className="group relative px-12 py-5 bg-[#1a1c1e] text-white rounded-[2rem] font-bold text-lg hover:bg-gray-800 transition-all shadow-xl active:scale-95 disabled:opacity-50 overflow-hidden"
+                          className="group relative px-10 py-4 bg-gradient-to-r from-neon-cyan to-neon-violet hover:shadow-[0_0_20px_rgba(0,243,255,0.3)] text-[#070a13] font-serif font-black rounded-xl transition-all duration-300 active:scale-95 disabled:opacity-50 overflow-hidden cursor-pointer text-base uppercase"
                         >
-                          <span className="relative flex items-center gap-3">
-                            {isAnalyzing ? <RefreshCw className="animate-spin" /> : <FileSearch />}
-                            {isAnalyzing ? 'Analyzing...' : 'Analyze Resume'}
+                          <span className="relative flex items-center gap-2.5">
+                            {isAnalyzing ? <RefreshCw className="animate-spin" /> : <FileSearch size={18} />}
+                            {isAnalyzing ? 'COMPILING_DATA...' : 'RUN_ANALYZER_PROBE'}
                           </span>
                         </button>
                       </motion.div>
                     )}
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between px-2">
-                        <h3 className="text-[10px] font-bold uppercase text-gray-400 tracking-[0.2em]">First Resume</h3>
-                        {resume1 && <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">Ready to go</span>}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between px-3">
+                        <h3 className="text-[10px] font-mono font-extrabold uppercase text-slate-500 tracking-[0.2em]">[ SOURCE_ALPHA ]</h3>
+                        {resume1 && <span className="text-[9px] font-mono font-bold text-neon-emerald bg-neon-emerald/10 border border-neon-emerald/30 px-2 py-0.5 rounded tracking-widest uppercase">READY_FLOW</span>}
                       </div>
                       <FileUpload key={`compare-upload-1-${resetKey}`} onTextExtracted={(text) => setResume1(text)} isAnalyzing={isAnalyzing} />
                     </div>
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between px-2">
-                        <h3 className="text-[10px] font-bold uppercase text-gray-400 tracking-[0.2em]">Second Resume</h3>
-                        {resume2 && <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">Ready to go</span>}
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between px-3">
+                        <h3 className="text-[10px] font-mono font-extrabold uppercase text-slate-500 tracking-[0.2em]">[ SOURCE_BETA ]</h3>
+                        {resume2 && <span className="text-[9px] font-mono font-bold text-neon-emerald bg-neon-emerald/10 border border-neon-emerald/30 px-2 py-0.5 rounded tracking-widest uppercase">READY_FLOW</span>}
                       </div>
                       <FileUpload key={`compare-upload-2-${resetKey}`} onTextExtracted={(text) => setResume2(text)} isAnalyzing={isAnalyzing} />
                     </div>
                     {resume1 && resume2 && (
-                      <div className="md:col-span-2 pt-8 flex justify-center">
+                      <div className="md:col-span-2 pt-6 flex justify-center">
                         <button
                           onClick={handleCompare}
                           disabled={isAnalyzing}
-                          className="group relative px-12 py-5 bg-[#1a1c1e] text-white rounded-[2rem] font-bold text-lg hover:bg-gray-800 transition-all shadow-xl active:scale-95 disabled:opacity-50 overflow-hidden"
+                          className="group relative px-10 py-4 bg-gradient-to-r from-neon-cyan to-neon-violet hover:shadow-[0_0_20px_rgba(0,243,255,0.3)] text-[#070a13] font-serif font-black rounded-xl transition-all duration-300 active:scale-95 disabled:opacity-50 overflow-hidden cursor-pointer text-base uppercase"
                         >
-                          <span className="relative flex items-center gap-3">
-                            {isAnalyzing ? <RefreshCw className="animate-spin" /> : <Scale />}
-                            {isAnalyzing ? 'Analyzing...' : 'Compare them now'}
+                          <span className="relative flex items-center gap-2.5">
+                            {isAnalyzing ? <RefreshCw className="animate-spin" /> : <Scale size={18} />}
+                            {isAnalyzing ? 'DEVIATION_SCANNING...' : 'COMPARE_RESUMES_PROBE'}
                           </span>
                         </button>
                       </div>
@@ -315,22 +327,22 @@ export default function App() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="space-y-8"
+              className="space-y-6"
             >
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between font-mono text-xs">
                 <button
                   onClick={reset}
-                  className="flex items-center gap-3 px-5 py-2.5 text-gray-500 hover:text-gray-900 font-bold transition-all group bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md active:scale-95"
+                  className="flex items-center gap-3 px-4 py-2 bg-slate-900 border border-tech-border rounded-xl text-slate-300 hover:text-neon-cyan hover:border-neon-cyan/45 hover:shadow-[0_0_15px_rgba(0,243,255,0.1)] transition-all cursor-pointer group"
                 >
-                  <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center group-hover:bg-[#d4a373]/10 group-hover:text-[#d4a373] transition-colors">
-                    <Layout size={16} />
+                  <div className="w-6 h-6 rounded bg-slate-800 flex items-center justify-center text-slate-400 group-hover:text-neon-cyan transition-colors">
+                    <Layout size={14} />
                   </div>
-                  Start over
+                  DISCONNECT_SIMULATION
                 </button>
-                <div className="flex flex-wrap items-center gap-3">
-                  <div className="flex items-center gap-2 px-4 py-2.5 bg-emerald-50 text-emerald-600 rounded-2xl text-[10px] font-bold uppercase tracking-widest border border-emerald-100 shadow-sm">
-                    <ShieldCheck size={14} />
-                    Hand-checked
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2 px-3 py-1.5 bg-neon-emerald/15 text-neon-emerald rounded-lg text-[9px] font-bold uppercase tracking-widest border border-neon-emerald/30 shadow-inner">
+                    <ShieldCheck size={12} />
+                    LOCAL_INTEGRITY_INDEX_OK
                   </div>
                 </div>
               </div>
@@ -344,22 +356,11 @@ export default function App() {
         </AnimatePresence>
       </main>
 
-      <footer className="border-t border-gray-100 bg-white/50 py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-8">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-[#1a1c1e] rounded-lg flex items-center justify-center text-white">
-                <Compass size={16} />
-              </div>
-              <span className="text-sm font-bold text-gray-900 tracking-tight">Job-saathi</span>
-            </div>
-            <p className="text-xs font-medium text-gray-400 uppercase tracking-widest">
-              Created by Atharva Raghuvanshi
-            </p>
-            <div className="flex items-center gap-6">
-            </div>
-          </div>
-        </div>
+      {/* Sleek, simple custom footer styled in beautiful cursive signature */}
+      <footer className="py-12 text-center border-t border-tech-border/30">
+        <p className="font-cursive text-2xl text-slate-400 hover:text-neon-cyan transition-colors duration-500 cursor-default select-none">
+          Created by Atharva Raghuvanshi
+        </p>
       </footer>
     </div>
   );

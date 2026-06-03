@@ -1,8 +1,8 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import { ResumeComparison } from '@/src/services/analysisService';
 import { motion } from 'motion/react';
 import { cn } from '@/src/lib/utils';
-import { Trophy, ArrowRight, CheckCircle2, AlertCircle, Scale, FileText, Share2, Heart, Star, Compass } from 'lucide-react';
+import { Trophy, ArrowRight, CheckCircle2, Scale, Star, Compass, AlertCircle, Sparkles } from 'lucide-react';
 import {
   Radar,
   RadarChart,
@@ -13,12 +13,6 @@ import {
   Tooltip,
 } from 'recharts';
 
-/**
- * ComparisonDashboard: A thoughtful side-by-side look at two career paths.
- * 
- * We use local analysis to focus on unique strengths and shared potential.
- */
-
 interface ComparisonDashboardProps {
   data: ResumeComparison;
 }
@@ -26,18 +20,18 @@ interface ComparisonDashboardProps {
 export const ComparisonDashboard: React.FC<ComparisonDashboardProps> = ({ data }) => {
   const dashboardRef = useRef<HTMLDivElement>(null);
 
-  const getScoreColor = (score: number) => {
-    if (score >= 80) return 'text-moss';
-    if (score >= 60) return 'text-clay';
-    if (score >= 40) return 'text-amber-600';
-    return 'text-rose-600';
+  const getScoreColorHex = (score: number) => {
+    if (score >= 80) return '#10f49c';
+    if (score >= 60) return '#00f3ff';
+    if (score >= 40) return '#a855f7';
+    return '#ff007f';
   };
 
-  const getScoreBg = (score: number) => {
-    if (score >= 80) return 'bg-moss/5 border-moss/10';
-    if (score >= 60) return 'bg-clay/5 border-clay/10';
-    if (score >= 40) return 'bg-amber-50 border-amber-100';
-    return 'bg-rose-50 border-rose-100';
+  const getScoreBgClass = (score: number) => {
+    if (score >= 80) return 'border-neon-emerald/30 bg-neon-emerald/5 text-neon-emerald shadow-[0_0_20px_rgba(16,244,156,0.05)]';
+    if (score >= 60) return 'border-neon-cyan/30 bg-neon-cyan/5 text-neon-cyan shadow-[0_0_20px_rgba(0,243,255,0.05)]';
+    if (score >= 40) return 'border-neon-violet/30 bg-neon-violet/5 text-neon-violet shadow-[0_0_20px_rgba(168,85,247,0.05)]';
+    return 'border-neon-pink/30 bg-neon-pink/5 text-neon-pink shadow-[0_0_20px_rgba(255,0,127,0.05)]';
   };
 
   // Combine skills for radar chart to see the overlap
@@ -60,183 +54,208 @@ export const ComparisonDashboard: React.FC<ComparisonDashboardProps> = ({ data }
   });
 
   return (
-    <div className="w-full max-w-7xl mx-auto space-y-16 pb-24 px-4 sm:px-6" ref={dashboardRef}>
-      {/* Friendly Action Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-6 mb-4">
+    <div className="w-full max-w-7xl mx-auto space-y-10 pb-20 px-4 sm:px-6 font-sans" ref={dashboardRef}>
+      
+      {/* Upper Technical Header */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 organic-card bg-tech-card/90 border border-tech-border/80">
         <div className="flex items-center gap-4">
-          <div className="p-3 bg-clay rounded-2xl text-white shadow-sm">
+          <div className="p-3 bg-neon-violet/10 border border-neon-violet/30 rounded-xl text-neon-violet shadow-[0_0_12px_rgba(168,85,247,0.2)]">
             <Scale size={24} />
           </div>
           <div>
-            <h2 className="text-2xl font-serif font-bold text-gray-900 tracking-tight">Side-by-Side Insights</h2>
-            <p className="text-sm font-medium text-gray-400 italic">Discovering the unique essence of each journey.</p>
+            <div className="flex items-center gap-2">
+              <h2 className="text-xl font-bold tracking-tight text-white font-serif">SIDE-BY-SIDE SUMMARY</h2>
+              <span className="text-[10px] bg-neon-violet/15 text-neon-violet border border-neon-violet/30 font-bold px-2 py-0.5 rounded tracking-wider uppercase">
+                Dual Mode
+              </span>
+            </div>
+            <p className="text-xs text-slate-400 mt-1">Direct profile comparison insight metrics</p>
           </div>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 self-start md:self-auto text-xs">
+          <span className="text-slate-400 font-medium">Comparison state:</span>
+          <span className="text-neon-cyan bg-neon-cyan/5 border border-neon-cyan/20 px-2.5 py-1 rounded font-bold">READY</span>
         </div>
       </div>
 
-      {/* Comparison Header */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-10 items-center">
-        {/* Resume 1 Stats */}
+      {/* Comparison Score Boards layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
+        
+        {/* Resume 1 Metric Card */}
         <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
+          initial={{ opacity: 0, scale: 0.96 }}
+          animate={{ opacity: 1, scale: 1 }}
           className={cn(
-            "p-8 sm:p-10 organic-card text-center relative overflow-hidden",
-            getScoreBg(data.resume1.atsScore),
-            data.winner === 1 && "ring-2 ring-clay/30"
+            "p-6 sm:p-8 organic-card text-center relative overflow-hidden border",
+            getScoreBgClass(data.resume1.atsScore),
+            data.winner === 1 && "border-neon-cyan shadow-[0_0_25px_rgba(0,243,255,0.1)]"
           )}
         >
           {data.winner === 1 && (
-            <div className="absolute top-4 right-4 sm:top-6 sm:right-6 text-clay">
-              <Star className="w-6 h-6 sm:w-7 sm:h-7" fill="currentColor" />
+            <div className="absolute top-4 right-4 text-neon-cyan flex items-center gap-1.5 bg-neon-cyan/15 px-2.5 py-1 border border-neon-cyan/30 rounded text-[9px] font-bold tracking-widest uppercase">
+              <Star className="w-3.5 h-3.5 animate-spin" />
+              BEST MATCH
             </div>
           )}
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500 mb-6">First Perspective</p>
-          <div className={cn("text-5xl sm:text-6xl font-serif font-black mb-2 tracking-tighter", getScoreColor(data.resume1.atsScore))}>
+          <p className="text-[10px] tracking-[0.2em] uppercase text-slate-400 mb-6 font-bold">PROFILE A</p>
+          <div className="text-6xl font-serif font-black mb-3 tracking-tighter" style={{ color: getScoreColorHex(data.resume1.atsScore), textShadow: `0 0 15px ${getScoreColorHex(data.resume1.atsScore)}30` }}>
             {data.resume1.atsScore}
           </div>
-          <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Match Score</p>
+          <p className="text-[10px] text-slate-400 uppercase tracking-widest">COMPETENCY COMPATIBILITY</p>
         </motion.div>
 
-        {/* Comparison Badge */}
-        <div className="flex flex-col items-center justify-center gap-6 sm:gap-8 py-4 sm:py-0">
-          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-[2rem] sm:rounded-[2.5rem] bg-[#1a1c1e] flex items-center justify-center text-white shadow-xl relative">
-            <Scale className="w-8 h-8 sm:w-10 sm:h-10" />
-            <div className="absolute -top-1 -right-1 w-7 h-7 sm:w-8 sm:h-8 bg-clay rounded-full border-4 border-[#fdfcfb] flex items-center justify-center text-[9px] sm:text-[10px] font-bold">VS</div>
+        {/* Central VS Telemetry controller */}
+        <div className="flex flex-col items-center justify-center gap-4 py-6">
+          <div className="w-20 h-20 rounded-2xl bg-slate-900 border border-tech-border flex items-center justify-center text-neon-cyan shadow-2xl relative">
+            <Scale className="w-8 h-8 filter drop-shadow-[0_0_5px_rgba(0,243,255,0.4)]" />
+            <div className="absolute -top-1.5 -right-1.5 w-7 h-7 bg-neon-pink border border-neon-pink/30 rounded-full flex items-center justify-center text-[10px] font-bold text-white shadow-lg animate-pulse">
+              VS
+            </div>
           </div>
           <div className="text-center">
-            <h3 className="text-xl sm:text-2xl font-serif font-bold text-gray-900 tracking-tight">The Comparison</h3>
-            <p className="text-xs sm:text-sm font-medium text-gray-400 italic mt-1">Finding the perfect fit.</p>
+            <h3 className="text-sm font-bold text-neon-cyan tracking-wider">PROFILE COMPARISON</h3>
+            <p className="text-[10px] text-slate-450 mt-1 uppercase">Relative skill fit mapping</p>
           </div>
         </div>
 
-        {/* Resume 2 Stats */}
+        {/* Resume 2 Metric Card */}
         <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
+          initial={{ opacity: 0, scale: 0.96 }}
+          animate={{ opacity: 1, scale: 1 }}
           className={cn(
-            "p-8 sm:p-10 organic-card text-center relative overflow-hidden",
-            getScoreBg(data.resume2.atsScore),
-            data.winner === 2 && "ring-2 ring-clay/30"
+            "p-6 sm:p-8 organic-card text-center relative overflow-hidden border",
+            getScoreBgClass(data.resume2.atsScore),
+            data.winner === 2 && "border-neon-cyan shadow-[0_0_25px_rgba(0,243,255,0.1)]"
           )}
         >
           {data.winner === 2 && (
-            <div className="absolute top-4 right-4 sm:top-6 sm:right-6 text-clay">
-              <Star className="w-6 h-6 sm:w-7 sm:h-7" fill="currentColor" />
+            <div className="absolute top-4 right-4 text-neon-cyan flex items-center gap-1.5 bg-neon-cyan/15 px-2.5 py-1 border border-neon-cyan/30 rounded text-[9px] font-bold tracking-widest uppercase">
+              <Star className="w-3.5 h-3.5 animate-spin" />
+              BEST MATCH
             </div>
           )}
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500 mb-6">Second Perspective</p>
-          <div className={cn("text-5xl sm:text-6xl font-serif font-black mb-2 tracking-tighter", getScoreColor(data.resume2.atsScore))}>
+          <p className="text-[10px] tracking-[0.2em] uppercase text-slate-400 mb-6 font-bold">PROFILE B</p>
+          <div className="text-6xl font-serif font-black mb-3 tracking-tighter" style={{ color: getScoreColorHex(data.resume2.atsScore), textShadow: `0 0 15px ${getScoreColorHex(data.resume2.atsScore)}30` }}>
             {data.resume2.atsScore}
           </div>
-          <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Match Score</p>
+          <p className="text-[10px] text-slate-400 uppercase tracking-widest">COMPETENCY COMPATIBILITY</p>
         </motion.div>
+
       </div>
 
-      {/* Comparison Summary */}
+      {/* Observation Suite (LinkedIn details block) */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
-        className="p-12 organic-card"
+        className="p-6 sm:p-8 organic-card border border-tech-border"
       >
-        <div className="flex items-center gap-4 mb-10">
-          <div className="w-12 h-12 rounded-2xl bg-clay/10 flex items-center justify-center text-clay">
-            <Scale size={24} fill="currentColor" />
+        <div className="flex items-center gap-3 mb-6 pb-4 border-b border-slate-800">
+          <div className="w-10 h-10 rounded-xl bg-neon-cyan/15 border border-neon-cyan/30 flex items-center justify-center text-neon-cyan shadow-[0_0_10px_rgba(0,243,255,0.2)]">
+            <Sparkles size={20} />
           </div>
-          <h3 className="text-2xl font-serif font-bold text-gray-900 tracking-tight">Our Observations</h3>
+          <div>
+            <h3 className="text-base font-serif font-black text-white uppercase">COMPARATIVE FEEDBACK</h3>
+            <p className="text-[10px] text-slate-400">Direct comparison of advantages & differentiators</p>
+          </div>
         </div>
-        <p className="text-xl text-gray-600 leading-relaxed mb-12 font-medium italic">
+
+        <p className="text-slate-300 leading-relaxed font-sans text-base mb-8">
           "{data.comparisonSummary}"
         </p>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
+          
+          {/* Key Differences */}
           {data.keyDifferences.length > 0 && (
-            <div className="space-y-8">
-              <h4 className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em] flex items-center gap-4">
-                <div className="w-8 h-8 rounded-xl bg-[#d4a373]/10 flex items-center justify-center text-[#d4a373]">
-                  <ArrowRight size={16} />
-                </div>
-                What sets them apart
+            <div className="space-y-4">
+              <h4 className="text-xs font-black text-slate-200 uppercase tracking-wider flex items-center gap-2">
+                <ArrowRight size={14} className="text-neon-pink" />
+                KEY DIFFERENCES
               </h4>
-              <ul className="space-y-5">
+              <ul className="space-y-3">
                 {(data?.keyDifferences || []).map((diff, i) => (
-                  <li key={i} className="flex items-start gap-5 p-5 bg-gray-50/50 rounded-[2rem] border border-gray-100 text-gray-700 text-base font-medium leading-relaxed">
-                    <div className="mt-2 w-2 h-2 rounded-full bg-clay shrink-0" />
+                  <li key={i} className="flex items-start gap-3 p-4 bg-slate-900/60 rounded-xl border border-tech-border text-slate-300 text-xs font-sans leading-relaxed hover:border-neon-pink/20 transition-all duration-300">
+                    <div className="mt-1 w-1.5 h-1.5 rounded-full bg-neon-pink shrink-0 animate-ping" />
                     {diff}
                   </li>
                 ))}
               </ul>
             </div>
           )}
+
+          {/* Similarities */}
           {data.similarities.length > 0 && (
-            <div className="space-y-8">
-              <h4 className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em] flex items-center gap-4">
-                <div className="w-8 h-8 rounded-xl bg-moss/10 flex items-center justify-center text-moss">
-                  <CheckCircle2 size={16} />
-                </div>
-                What they share
+            <div className="space-y-4">
+              <h4 className="text-xs font-black text-slate-200 uppercase tracking-wider flex items-center gap-2">
+                <CheckCircle2 size={14} className="text-neon-emerald" />
+                SHARED STRENGTHS
               </h4>
-              <ul className="space-y-5">
+              <ul className="space-y-3">
                 {(data?.similarities || []).map((sim, i) => (
-                  <li key={i} className="flex items-start gap-5 p-5 bg-gray-50/50 rounded-[2rem] border border-gray-100 text-gray-700 text-base font-medium leading-relaxed">
-                    <div className="mt-2 w-2 h-2 rounded-full bg-moss shrink-0" />
+                  <li key={i} className="flex items-start gap-3 p-4 bg-slate-900/60 rounded-xl border border-tech-border text-slate-300 text-xs font-sans leading-relaxed hover:border-neon-emerald/20 transition-all duration-300">
+                    <div className="mt-1 w-1.5 h-1.5 rounded-full bg-neon-emerald shrink-0" />
                     {sim}
                   </li>
                 ))}
               </ul>
             </div>
           )}
+
         </div>
       </motion.div>
 
-      {/* Skill Profile Comparison */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+      {/* Radar Overlap Component */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        
+        {/* Radar Map (Span 7) */}
         <motion.div
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="organic-card p-12"
+          className="organic-card p-6 border border-tech-border lg:col-span-7"
         >
-          <div className="flex items-center justify-between mb-12">
-            <h3 className="text-xl font-serif font-bold text-gray-900 tracking-tight">Overlap of Talents</h3>
+          <div className="flex items-center justify-between mb-6 pb-2 border-b border-slate-800">
+            <h3 className="text-sm font-semibold text-slate-200 uppercase">
+              SKILL COMPARISON SUMMARY
+            </h3>
+            <span className="text-[10px] text-neon-cyan uppercase tracking-wider">OVERLAP CHART</span>
           </div>
-          <div className="h-[400px] w-full">
+
+          <div className="h-[300px] w-full flex items-center justify-center">
             <ResponsiveContainer width="100%" height="100%">
               <RadarChart cx="50%" cy="50%" outerRadius="80%" data={radarData}>
-                <PolarGrid stroke="#f1f5f9" />
-                <PolarAngleAxis dataKey="subject" tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 600 }} />
+                <PolarGrid stroke="#1e293b" />
+                <PolarAngleAxis dataKey="subject" tick={{ fill: '#808ea3', fontSize: 8, fontFamily: 'monospace' }} />
                 <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
                 <Radar
-                  name="Resume 1"
+                  name="Alpha"
                   dataKey="A"
-                  stroke="#d4a373"
-                  fill="#d4a373"
-                  fillOpacity={0.05}
+                  stroke="#00f3ff"
+                  fill="#00f3ff"
+                  fillOpacity={0.06}
                   strokeWidth={2}
                 />
                 <Radar
-                  name="Resume 2"
+                  name="Beta"
                   dataKey="B"
-                  stroke="#606c38"
-                  fill="#606c38"
-                  fillOpacity={0.05}
+                  stroke="#10f49c"
+                  fill="#10f49c"
+                  fillOpacity={0.06}
                   strokeWidth={2}
                 />
                 <Tooltip 
                   content={({ active, payload }) => {
                     if (active && payload && payload.length) {
                       return (
-                        <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-xl">
-                          <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-2">{payload[0].payload.subject}</p>
+                        <div className="bg-[#0c1220] p-4 rounded-xl border border-tech-border shadow-2xl font-mono text-xs text-white">
+                          <p className="text-slate-400 text-[10px] uppercase mb-2">[{payload[0].payload.subject}]</p>
                           <div className="space-y-1">
                             <div className="flex items-center justify-between gap-8">
-                              <span className="text-xs font-bold text-clay">Resume 1</span>
-                              <span className="text-sm font-black text-clay">{payload[0].value}%</span>
+                              <span className="text-neon-cyan font-bold">PROFILE A</span>
+                              <span className="font-bold text-white">{payload[0].value}%</span>
                             </div>
                             <div className="flex items-center justify-between gap-8">
-                              <span className="text-xs font-bold text-moss">Resume 2</span>
-                              <span className="text-sm font-black text-moss">{payload[1].value}%</span>
+                              <span className="text-neon-emerald font-bold">PROFILE B</span>
+                              <span className="font-bold text-white">{payload[1].value}%</span>
                             </div>
                           </div>
                         </div>
@@ -248,54 +267,60 @@ export const ComparisonDashboard: React.FC<ComparisonDashboardProps> = ({ data }
               </RadarChart>
             </ResponsiveContainer>
           </div>
-          <div className="flex justify-center gap-10 mt-10">
-            <div className="flex items-center gap-3">
-              <div className="w-4 h-4 rounded-full bg-clay shadow-sm" />
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">First Resume</span>
+
+          <div className="flex justify-center gap-6 mt-4 font-mono text-[10px]">
+            <div className="flex items-center gap-2 px-3 py-1 bg-neon-cyan/5 border border-neon-cyan/20 rounded">
+              <div className="w-2.5 h-2.5 bg-neon-cyan rounded" />
+              <span className="text-neon-cyan font-bold">PROFILE A</span>
             </div>
-            <div className="flex items-center gap-3">
-              <div className="w-4 h-4 rounded-full bg-moss shadow-sm" />
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Second Resume</span>
+            <div className="flex items-center gap-2 px-3 py-1 bg-neon-emerald/5 border border-neon-emerald/20 rounded">
+              <div className="w-2.5 h-2.5 bg-neon-emerald rounded" />
+              <span className="text-neon-emerald font-bold">PROFILE B</span>
             </div>
           </div>
         </motion.div>
 
-        <div className="space-y-10">
-          {/* Resume 1 Strengths */}
-          <div className="organic-card p-10">
-            <div className="flex items-center justify-between mb-8">
-              <h4 className="font-serif font-bold text-gray-900 text-lg flex items-center gap-4">
-                <div className="w-2 h-8 bg-clay rounded-full" />
-                First Toolkit
+        {/* Toolkits found Comparison (Span 5) */}
+        <div className="lg:col-span-5 space-y-6">
+          
+          {/* Resume 1 skills */}
+          <div className="organic-card p-6 border border-tech-border">
+            <div className="flex items-center justify-between mb-4 pb-2 border-b border-slate-800">
+              <h4 className="text-xs font-black text-slate-300 uppercase flex items-center gap-2">
+                <span className="w-2 h-4 bg-neon-cyan rounded" />
+                PROFILE A SKILLS
               </h4>
             </div>
-            <div className="flex flex-wrap gap-3">
-              {(data?.resume1?.skillsFound || []).slice(0, 12).map((skill, i) => (
-                <span key={i} className="px-5 py-2.5 bg-clay/5 text-clay rounded-2xl text-sm font-medium border border-clay/10">
+            <div className="flex flex-wrap gap-2">
+              {(data?.resume1?.skillsFound || []).slice(0, 10).map((skill, i) => (
+                <span key={i} className="px-2.5 py-1 bg-slate-900 border border-tech-border text-slate-400 font-mono text-[10px] rounded hover:border-neon-cyan/30 hover:text-slate-100 transition-colors cursor-default">
                   {skill}
                 </span>
               ))}
             </div>
           </div>
 
-          {/* Resume 2 Strengths */}
-          <div className="organic-card p-10">
-            <div className="flex items-center justify-between mb-8">
-              <h4 className="font-serif font-bold text-gray-900 text-lg flex items-center gap-4">
-                <div className="w-2 h-8 bg-moss rounded-full" />
-                Second Toolkit
+          {/* Resume 2 skills */}
+          <div className="organic-card p-6 border border-tech-border">
+            <div className="flex items-center justify-between mb-4 pb-2 border-b border-slate-800">
+              <h4 className="text-xs font-black text-slate-300 uppercase flex items-center gap-2">
+                <span className="w-2 h-4 bg-neon-emerald rounded" />
+                PROFILE B SKILLS
               </h4>
             </div>
-            <div className="flex flex-wrap gap-3">
-              {(data?.resume2?.skillsFound || []).slice(0, 12).map((skill, i) => (
-                <span key={i} className="px-5 py-2.5 bg-moss/5 text-moss rounded-2xl text-sm font-medium border border-moss/10">
+            <div className="flex flex-wrap gap-2">
+              {(data?.resume2?.skillsFound || []).slice(0, 10).map((skill, i) => (
+                <span key={i} className="px-2.5 py-1 bg-slate-900 border border-tech-border text-slate-400 font-mono text-[10px] rounded hover:border-neon-emerald/30 hover:text-slate-100 transition-colors cursor-default">
                   {skill}
                 </span>
               ))}
             </div>
           </div>
+
         </div>
+
       </div>
+
     </div>
   );
 };
